@@ -1,4 +1,4 @@
-package com.pavan.hireflow.entities;
+package com.pavan.hireflow.auth;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

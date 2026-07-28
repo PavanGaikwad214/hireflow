@@ -1,4 +1,4 @@
-package com.pavan.hireflow.enums;
+package com.pavan.hireflow.common.enums;
 
 public enum ApplicationStatus {
     PENDING,

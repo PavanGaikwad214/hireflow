@@ -1,6 +1,6 @@
-package com.pavan.hireflow.entities;
+package com.pavan.hireflow.auth;
 
-import com.pavan.hireflow.enums.Role;
+import com.pavan.hireflow.common.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
