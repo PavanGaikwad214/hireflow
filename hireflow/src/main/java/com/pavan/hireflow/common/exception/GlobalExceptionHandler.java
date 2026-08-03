@@ -45,4 +45,32 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidCredentialsException(InvalidCredentialsException exception){
+
+        ApiErrorResponse response = new ApiErrorResponse(
+                401,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(AccountInactiveException.class)
+    public ResponseEntity<ApiErrorResponse> handleAccountDisabledException(AccountInactiveException exception){
+
+        ApiErrorResponse response = new ApiErrorResponse(
+                403,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+
+        );
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
 }

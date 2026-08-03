@@ -2,10 +2,13 @@ package com.pavan.hireflow.auth.service;
 
 import com.pavan.hireflow.auth.dto.AuthResponse;
 import com.pavan.hireflow.auth.dto.CandidateRegisterRequest;
+import com.pavan.hireflow.auth.dto.LoginRequest;
 import com.pavan.hireflow.auth.entity.User;
 import com.pavan.hireflow.auth.repository.UserRepository;
 import com.pavan.hireflow.common.enums.Role;
+import com.pavan.hireflow.common.exception.AccountInactiveException;
 import com.pavan.hireflow.common.exception.EmailAlreadyExistsException;
+import com.pavan.hireflow.common.exception.InvalidCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +49,35 @@ public class AuthService {
         AuthResponse response = new AuthResponse();
         response.setMessage("Candidate registered Successfully");
 
+
+        return response;
+    }
+
+    public AuthResponse login(LoginRequest request){
+
+        User user  = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new InvalidCredentialsException(
+                            "Invalid Email or Password"
+                ));
+
+        if(!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword()
+        )){
+            throw new InvalidCredentialsException(
+                    "Invalid Email or Password"
+            );
+        }
+
+        if(!user.isActive()){
+            throw new AccountInactiveException(
+                    "Account is inactive"
+            );
+        }
+
+        AuthResponse response = new AuthResponse();
+        response.setUserId(user.getId());
+        response.setMessage("Login Successfully");
 
         return response;
     }
