@@ -35,8 +35,27 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+
+
+
+
+
+    // Testing API's
+
+
     @GetMapping("/test")
     public ResponseEntity<String> test(){
         return ResponseEntity.ok("Authenticated successfully");
+    }
+
+
+    @GetMapping("/candidate-test")
+    public ResponseEntity<String> candidateTest(){
+        return ResponseEntity.ok("Candidate access granted");
+    }
+
+    @GetMapping("/recruiter-test")
+    public ResponseEntity<String> recruiterTest(){
+        return ResponseEntity.ok("Recruiter Access granted");
     }
 }
