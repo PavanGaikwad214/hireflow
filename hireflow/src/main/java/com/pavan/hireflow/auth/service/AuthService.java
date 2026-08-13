@@ -19,10 +19,12 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public AuthResponse registerCandidate(CandidateRegisterRequest request) {
@@ -75,8 +77,11 @@ public class AuthService {
             );
         }
 
+        String token = jwtService.generateToken(user);
+
         AuthResponse response = new AuthResponse();
         response.setUserId(user.getId());
+        response.setToken(token);
         response.setMessage("Login Successfully");
 
         return response;
