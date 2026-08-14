@@ -29,10 +29,10 @@ public class SecurityConfig {
                 .permitAll()
 
                 // Testing Candidate authorization like if candidate is allowed or What are you allowed to do?
-                        .requestMatchers("/auth/candidate-test")
-                        .hasRole("CANDIDATE")
-                        .requestMatchers("/auth/recruiter-test")
-                        .hasRole("RECRUITER")
+//                        .requestMatchers("/auth/candidate-test")
+//                        .hasRole("CANDIDATE")
+//                        .requestMatchers("/auth/recruiter-test")
+//                        .hasRole("RECRUITER")
                 .anyRequest()
                 .authenticated()
         )
