@@ -73,4 +73,26 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
+    @ExceptionHandler(CandidateProfileNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleCandidateProfileNotFoundException(CandidateProfileNotFoundException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                404,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(CandidateProfileAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleCandidateProfileAlreadyExistException(CandidateProfileAlreadyExistsException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                409,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
 }

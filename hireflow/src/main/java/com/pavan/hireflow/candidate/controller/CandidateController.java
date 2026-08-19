@@ -37,4 +37,14 @@ public class CandidateController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @PutMapping("/profile")
+    public ResponseEntity<CandidateProfileResponse> updateProfile(
+            @AuthenticationPrincipal User user,
+            @RequestBody CandidateProfileRequest request
+    ){
+        CandidateProfileResponse response = candidateService.updateProfile(user.getId(), request);
+
+        return ResponseEntity.ok(response);
+    }
 }
