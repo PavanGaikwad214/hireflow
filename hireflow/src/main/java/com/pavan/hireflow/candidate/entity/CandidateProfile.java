@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "candidate_profiles")
 @Getter
@@ -34,4 +37,12 @@ public class CandidateProfile {
     private String linkedinUrl;
 
     private String portfolioUrl;
+
+    @ManyToMany
+    @JoinTable(
+            name = "candidate_skills",
+            joinColumns = @JoinColumn(name = "candidate_profile_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id")
+    )
+    private Set<Skill> skills = new HashSet<>();
 }
