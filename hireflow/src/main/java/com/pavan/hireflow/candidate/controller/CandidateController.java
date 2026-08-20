@@ -3,6 +3,8 @@ package com.pavan.hireflow.candidate.controller;
 import com.pavan.hireflow.auth.entity.User;
 import com.pavan.hireflow.candidate.dto.CandidateProfileRequest;
 import com.pavan.hireflow.candidate.dto.CandidateProfileResponse;
+import com.pavan.hireflow.candidate.dto.CandidateSkillsRequest;
+import com.pavan.hireflow.candidate.dto.CandidateSkillsResponse;
 import com.pavan.hireflow.candidate.service.CandidateService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,5 +48,35 @@ public class CandidateController {
         CandidateProfileResponse response = candidateService.updateProfile(user.getId(), request);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("profile/skills")
+    public ResponseEntity<Void> addSkills(
+            @AuthenticationPrincipal User user,
+            @RequestBody CandidateSkillsRequest request
+            ){
+
+        candidateService.addSkill(user.getId(), request);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("profile/skills")
+    public ResponseEntity<CandidateSkillsResponse> getSkills(
+            @AuthenticationPrincipal User user
+    ){
+
+        return  ResponseEntity.ok(candidateService.getSkills(user.getId()));
+
+    }
+
+    @DeleteMapping("profile/skills/{skillId}")
+    public  ResponseEntity<Void> removeSkills(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long skillId
+    ){
+        candidateService.removeSkill(user.getId(), skillId);
+
+        return ResponseEntity.noContent().build();
     }
 }

@@ -95,4 +95,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
+    @ExceptionHandler(SkillNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleSkillNotFoundException(SkillNotFoundException exception){
+
+        ApiErrorResponse response = new ApiErrorResponse(
+                404,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
 }
