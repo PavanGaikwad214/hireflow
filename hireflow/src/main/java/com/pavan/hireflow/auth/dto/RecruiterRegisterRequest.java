@@ -21,7 +21,7 @@ public class RecruiterRegisterRequest {
 
     private String email;
 
-
     private String companyName;
+
     private String designation;
 }
