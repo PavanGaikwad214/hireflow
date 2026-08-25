@@ -14,10 +14,11 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    Map<String, String> errors = new HashMap<>();
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorResponse> handleValidationException(MethodArgumentNotValidException exception){
+
+        Map<String, String> errors = new HashMap<>();
 
         exception.getBindingResult()
                 .getFieldErrors()
@@ -118,6 +119,43 @@ public class GlobalExceptionHandler {
         );
 
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(RecruiterProfileNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleRecruiterProfileNotFoundException(
+            RecruiterProfileNotFoundException exception
+    ){
+        ApiErrorResponse response = new ApiErrorResponse(
+                404,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(JobNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleJobNotFoundException(JobNotFoundException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                404,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(JobAccessDeniedException.class)
+    public  ResponseEntity<ApiErrorResponse> handleJobAccessDeniedException(JobAccessDeniedException exception){
+
+        ApiErrorResponse response = new ApiErrorResponse(
+                403,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+
+        return  ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
 }

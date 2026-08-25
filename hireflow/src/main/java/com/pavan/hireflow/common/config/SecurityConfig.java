@@ -3,7 +3,6 @@ package com.pavan.hireflow.common.config;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,9 +26,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/register/**", "/auth/login")
+                .requestMatchers("/auth/register/**", "/auth/login", "/error")
                 .permitAll()
 
+                                .requestMatchers("/jobs/**")
+                                .hasRole("RECRUITER")
                 // Testing Candidate authorization like if candidate is allowed or What are you allowed to do?
 //                        .requestMatchers("/auth/candidate-test")
 //                        .hasRole("CANDIDATE")
@@ -41,9 +42,32 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(
-                                (request, response, authException) ->
-                                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
-                        ))
+                                (request, response, authException) -> {
+                                    System.out.println(
+                                            "===== AUTHENTICATION ENTRY POINT ====="
+                                    );
+                                    System.out.println(
+                                            "Exception: " + authException.getMessage()
+                                    );
+                                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                                })
+                        .accessDeniedHandler(
+                                (request, response, accessDeniedException) -> {
+                                    System.out.println(
+                                            "===== ACCESS DENIED HANDLER ====="
+                                    );
+                                    System.out.println(
+                                            "Exception: "
+                                                    + accessDeniedException.getMessage()
+                                    );
+
+                                    response.sendError(
+                                            HttpServletResponse.SC_FORBIDDEN
+                                    );
+                                }
+
+                        )
+                )
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class

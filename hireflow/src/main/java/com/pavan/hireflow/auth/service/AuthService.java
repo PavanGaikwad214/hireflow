@@ -2,6 +2,7 @@ package com.pavan.hireflow.auth.service;
 
 import com.pavan.hireflow.auth.dto.AuthResponse;
 import com.pavan.hireflow.auth.dto.CandidateRegisterRequest;
+import com.pavan.hireflow.auth.dto.ChangePasswordRequest;
 import com.pavan.hireflow.auth.dto.LoginRequest;
 import com.pavan.hireflow.auth.entity.User;
 import com.pavan.hireflow.auth.repository.UserRepository;
@@ -83,6 +84,25 @@ public class AuthService {
         response.setUserId(user.getId());
         response.setToken(token);
         response.setMessage("Login Successfully");
+
+        return response;
+    }
+
+    public AuthResponse changePassword(User user,ChangePasswordRequest request){
+
+        if(!passwordEncoder.matches(
+                request.getCurrentPassword(),
+                user.getPassword()
+        )){
+              throw new InvalidCredentialsException("Invalid Password");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        userRepository.save(user);
+
+        AuthResponse response = new AuthResponse();
+        response.setMessage("Change Password Successfully");
 
         return response;
     }

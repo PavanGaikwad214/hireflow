@@ -2,11 +2,14 @@ package com.pavan.hireflow.auth.controller;
 
 import com.pavan.hireflow.auth.dto.AuthResponse;
 import com.pavan.hireflow.auth.dto.CandidateRegisterRequest;
+import com.pavan.hireflow.auth.dto.ChangePasswordRequest;
 import com.pavan.hireflow.auth.dto.LoginRequest;
+import com.pavan.hireflow.auth.entity.User;
 import com.pavan.hireflow.auth.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -36,6 +39,16 @@ public class AuthController {
     }
 
 
+    @PostMapping("/change-password")
+    public ResponseEntity<AuthResponse> changePassword(
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody ChangePasswordRequest request
+            ){
+
+        AuthResponse response = authService.changePassword(user, request);
+
+        return ResponseEntity.ok(response);
+    }
 
 
 
