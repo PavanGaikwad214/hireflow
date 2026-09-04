@@ -59,4 +59,12 @@ public class JobController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping("/{jobId}/close")
+    public ResponseEntity<JobResponse> closeJob(
+            @PathVariable Long jobId,
+            @AuthenticationPrincipal User user
+    ){
+        return ResponseEntity.ok(jobService.closeJob(jobId, user));
+    }
 }

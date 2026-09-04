@@ -8,6 +8,7 @@ import com.pavan.hireflow.candidate.dto.CandidateSkillsResponse;
 import com.pavan.hireflow.candidate.service.CandidateService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ public class CandidateController {
     }
 
 
+    @PreAuthorize("hasRole('CANDIDATE)")
     @GetMapping("/profile")
     public ResponseEntity<CandidateProfileResponse> getProfile(
             @AuthenticationPrincipal User user
@@ -29,6 +31,7 @@ public class CandidateController {
         return ResponseEntity.ok(candidateService.getProfile(user.getId()));
     }
 
+    @PreAuthorize("hasRole('CANDIDATE')")
     @PostMapping("/profile")
     public ResponseEntity<CandidateProfileResponse> createProfile(
             @AuthenticationPrincipal User user,
@@ -40,6 +43,7 @@ public class CandidateController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PreAuthorize("hasRole('CANDIDATE')")
     @PutMapping("/profile")
     public ResponseEntity<CandidateProfileResponse> updateProfile(
             @AuthenticationPrincipal User user,
@@ -50,6 +54,7 @@ public class CandidateController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('CANDIDATE')")
     @PostMapping("profile/skills")
     public ResponseEntity<Void> addSkills(
             @AuthenticationPrincipal User user,
@@ -61,6 +66,7 @@ public class CandidateController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('CANDIDATE')")
     @GetMapping("profile/skills")
     public ResponseEntity<CandidateSkillsResponse> getSkills(
             @AuthenticationPrincipal User user
@@ -70,6 +76,7 @@ public class CandidateController {
 
     }
 
+    @PreAuthorize("hasRole('CANDIDATE')")
     @DeleteMapping("profile/skills/{skillId}")
     public  ResponseEntity<Void> removeSkills(
             @AuthenticationPrincipal User user,

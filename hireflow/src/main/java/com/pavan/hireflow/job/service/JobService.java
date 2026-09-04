@@ -3,7 +3,9 @@ package com.pavan.hireflow.job.service;
 import com.pavan.hireflow.auth.entity.User;
 import com.pavan.hireflow.candidate.entity.Skill;
 import com.pavan.hireflow.candidate.repository.SkillRepository;
+import com.pavan.hireflow.common.enums.JobStatus;
 import com.pavan.hireflow.common.exception.JobAccessDeniedException;
+import com.pavan.hireflow.common.exception.JobAlreadyClosedException;
 import com.pavan.hireflow.common.exception.JobNotFoundException;
 import com.pavan.hireflow.common.exception.RecruiterProfileNotFoundException;
 import com.pavan.hireflow.company.entity.RecruiterProfile;
@@ -49,6 +51,8 @@ public class JobService {
         job.setMinSalary(request.getMinSalary());
         job.setMaxSalary(request.getMaxSalary());
 
+        job.setStatus(JobStatus.OPEN);
+
         job.setRecruiter(recruiterProfile);
         job.setCompany(recruiterProfile.getCompany());
 
@@ -88,7 +92,7 @@ public class JobService {
 
     public List<JobResponse> getAllJobs(){
 
-        List<Job> jobs = jobRepository.findAll();
+        List<Job> jobs = jobRepository.findByStatus(JobStatus.OPEN);
 
         return jobs.stream()
                 .map(this::mapToResponse)
@@ -139,6 +143,27 @@ public class JobService {
         return mapToResponse(updatedJob);
     }
 
+    public JobResponse closeJob(Long jobId, User user){
+
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new JobNotFoundException("Job not found"));
+
+        if(!job.getRecruiter().getUser().getId().equals(user.getId())){
+            throw new JobAccessDeniedException("You are not allowed to close this job");
+        }
+
+        if(job.getStatus().equals(JobStatus.CLOSED)){
+            throw new JobAlreadyClosedException("Job is already closed");
+        }
+
+        job.setStatus(JobStatus.CLOSED);
+
+        Job savedJob = jobRepository.save(job);
+
+        return mapToResponse(savedJob);
+
+    }
+
     private JobResponse mapToResponse(Job job){
 
         String recruiterName =
@@ -162,7 +187,8 @@ public class JobService {
                 job.getCompany().getName(),
                 job.getRecruiter().getId(),
                 recruiterName,
-                requiredSkills
+                requiredSkills,
+                job.getStatus()
         );
     }
 }

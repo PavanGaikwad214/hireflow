@@ -1,5 +1,6 @@
 package com.pavan.hireflow.job.dto;
 
+import com.pavan.hireflow.common.enums.JobStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -32,4 +33,6 @@ public class JobResponse {
     private String recruiterName;
 
     private Set<String> requiredSkills;
+
+    private JobStatus status;
 }

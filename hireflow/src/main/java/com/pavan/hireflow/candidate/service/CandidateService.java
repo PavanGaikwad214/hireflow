@@ -104,6 +104,8 @@ public class CandidateService {
                 .orElseThrow(() -> new CandidateProfileNotFoundException("Candidate Profile Not Found"));
 
 
+        if(request.getSkills() == null) return;
+
         for(String skillName : request.getSkills()){
 
             String normalizedSkill =  skillName.trim();

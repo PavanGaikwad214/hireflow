@@ -1,6 +1,7 @@
 package com.pavan.hireflow.job.entity;
 
 import com.pavan.hireflow.candidate.entity.Skill;
+import com.pavan.hireflow.common.enums.JobStatus;
 import com.pavan.hireflow.company.entity.Company;
 import com.pavan.hireflow.company.entity.RecruiterProfile;
 import jakarta.persistence.*;
@@ -54,4 +55,6 @@ public class Job {
     )
     private Set<Skill>  requiredSkills = new HashSet<>();
 
+    @Enumerated(EnumType.STRING)
+    private JobStatus  status;
 }

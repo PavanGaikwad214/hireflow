@@ -3,6 +3,7 @@ package com.pavan.hireflow.common.config;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,8 +30,18 @@ public class SecurityConfig {
                 .requestMatchers("/auth/register/**", "/auth/login", "/error")
                 .permitAll()
 
-                                .requestMatchers("/jobs/**")
+                                .requestMatchers(HttpMethod.GET, "/jobs/**")
+                                .permitAll()
+
+                                .requestMatchers(HttpMethod.POST, "/jobs/**")
                                 .hasRole("RECRUITER")
+
+                                .requestMatchers(HttpMethod.PUT, "/jobs/**")
+                                .hasRole("RECRUITER")
+
+                                .requestMatchers(HttpMethod.PATCH, "/jobs/**")
+                                .hasRole("RECRUITER")
+
                 // Testing Candidate authorization like if candidate is allowed or What are you allowed to do?
 //                        .requestMatchers("/auth/candidate-test")
 //                        .hasRole("CANDIDATE")

@@ -158,4 +158,93 @@ public class GlobalExceptionHandler {
         return  ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
+    @ExceptionHandler(JobAlreadyClosedException.class)
+    public ResponseEntity<ApiErrorResponse> handleJobAlreadyClosedException(JobAlreadyClosedException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                409,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+
+        return  ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(ApplicationClosedException.class)
+    public ResponseEntity<ApiErrorResponse> handleApplicationClosedException(ApplicationClosedException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                409,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+
+        return  ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(ApplicationAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleApplicationAlreadyExistsException(ApplicationAlreadyExistsException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                409,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(JobClosedException.class)
+    public ResponseEntity<ApiErrorResponse> handleJobClosedException(JobClosedException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                409,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(ApplicationNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleApplicationNotFoundException(ApplicationNotFoundException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                404,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(InvalidApplicationStatusTransitionException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidApplicationStatusTransitionException(InvalidApplicationStatusTransitionException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                409,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(EducationNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleEducationNotFoundException(EducationNotFoundException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                404,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(ExperienceNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleExperienceNotFoundException(ExperienceNotFoundException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                404,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 }
