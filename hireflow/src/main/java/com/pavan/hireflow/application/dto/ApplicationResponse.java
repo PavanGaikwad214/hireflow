@@ -18,6 +18,9 @@ public class ApplicationResponse {
     private Long jobId;
     private String jobTitle;
 
+    private Long resumeId;
+    private String resumeTitle;
+
     private Long companyId;
     private String companyName;
 

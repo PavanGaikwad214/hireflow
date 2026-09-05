@@ -247,4 +247,37 @@ public class GlobalExceptionHandler {
         );
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+
+    @ExceptionHandler(ProjectNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleProjectNotFoundException(ProjectNotFoundException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                404,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(ResumeNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleResumeNotFoundException(ResumeNotFoundException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                404,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(CertificationNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleCertificationNotFoundException(CertificationNotFoundException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                404,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 }

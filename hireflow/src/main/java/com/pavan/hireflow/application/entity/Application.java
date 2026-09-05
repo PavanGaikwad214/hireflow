@@ -1,6 +1,7 @@
 package com.pavan.hireflow.application.entity;
 
 import com.pavan.hireflow.candidate.entity.CandidateProfile;
+import com.pavan.hireflow.candidate.entity.Resume;
 import com.pavan.hireflow.common.enums.ApplicationStatus;
 import com.pavan.hireflow.job.entity.Job;
 import jakarta.persistence.*;
@@ -35,6 +36,10 @@ public class Application {
     @ManyToOne
     @JoinColumn(name = "job_id", nullable = false)
     private Job job;
+
+    @ManyToOne
+    @JoinColumn(name = "resume_id", nullable = true)
+    private Resume resume;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

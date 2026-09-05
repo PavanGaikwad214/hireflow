@@ -9,4 +9,6 @@ public class ApplicationRequest {
 
 
     private Long jobId;
+
+    private Long resumeId;
 }

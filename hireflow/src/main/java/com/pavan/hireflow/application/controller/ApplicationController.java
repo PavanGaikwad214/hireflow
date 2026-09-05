@@ -32,7 +32,7 @@ public class ApplicationController {
             @AuthenticationPrincipal User user
             ){
 
-        ApplicationResponse response = applicationService.applyForJob(request.getJobId(), user);
+        ApplicationResponse response = applicationService.applyForJob(request.getJobId(), request.getResumeId(), user);
 
         return ResponseEntity.ok(response);
     }

@@ -6,7 +6,9 @@ import com.pavan.hireflow.application.entity.Application;
 import com.pavan.hireflow.application.repository.ApplicationRepository;
 import com.pavan.hireflow.auth.entity.User;
 import com.pavan.hireflow.candidate.entity.CandidateProfile;
+import com.pavan.hireflow.candidate.entity.Resume;
 import com.pavan.hireflow.candidate.repository.CandidateProfileRepository;
+import com.pavan.hireflow.candidate.repository.ResumeRepository;
 import com.pavan.hireflow.common.enums.ApplicationStatus;
 import com.pavan.hireflow.common.enums.JobStatus;
 import com.pavan.hireflow.common.exception.*;
@@ -26,19 +28,25 @@ public class ApplicationService {
     private final CandidateProfileRepository candidateProfileRepository;
     private final JobRepository jobRepository;
     private final RecruiterProfileRepository recruiterProfileRepository;
+    private final ResumeRepository resumeRepository;
 
-    public ApplicationService(ApplicationRepository applicationRepository, CandidateProfileRepository candidateProfileRepository, JobRepository jobRepository, RecruiterProfileRepository recruiterProfileRepository) {
+    public ApplicationService(ApplicationRepository applicationRepository, CandidateProfileRepository candidateProfileRepository, JobRepository jobRepository, RecruiterProfileRepository recruiterProfileRepository, ResumeRepository resumeRepository) {
         this.applicationRepository = applicationRepository;
         this.candidateProfileRepository = candidateProfileRepository;
         this.jobRepository = jobRepository;
         this.recruiterProfileRepository = recruiterProfileRepository;
+        this.resumeRepository = resumeRepository;
     }
 
 
-    public ApplicationResponse applyForJob(Long jobId, User user){
+    public ApplicationResponse applyForJob(Long jobId, Long resumeId, User user){
 
         CandidateProfile candidateProfile = candidateProfileRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new CandidateProfileNotFoundException("Candidate Profile Not Found"));
+
+        Resume resume = resumeRepository
+                .findByIdAndCandidateProfile_Id(resumeId, candidateProfile.getId())
+                .orElseThrow(() -> new ResumeNotFoundException("Resume Not Found"));
 
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new JobNotFoundException("Job Not Found"));
@@ -58,6 +66,7 @@ public class ApplicationService {
 
         application.setCandidate(candidateProfile);
         application.setJob(job);
+        application.setResume(resume);
 
         application.setStatus(ApplicationStatus.PENDING);
 
@@ -197,12 +206,22 @@ public class ApplicationService {
             candidateName += " " + candidate.getUser().getLastName();
         }
 
+        Long resumeId = null;
+        String resumeTitle = null;
+
+        if (application.getResume() != null) {
+            resumeId = application.getResume().getId();
+            resumeTitle = application.getResume().getTitle();
+        }
+
         return new ApplicationResponse(
                 application.getId(),
                 candidate.getId(),
                 candidateName,
                 job.getId(),
                 job.getTitle(),
+                resumeId,
+                resumeTitle,
                 job.getCompany().getId(),
                 job.getCompany().getName(),
                 application.getStatus(),
