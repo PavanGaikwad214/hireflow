@@ -280,4 +280,37 @@ public class GlobalExceptionHandler {
         );
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+
+    @ExceptionHandler(JobAlreadySavedException.class)
+    public ResponseEntity<ApiErrorResponse> handleJobAlreadySavedException(JobAlreadySavedException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                409,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(SavedJobNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleSavedJobNotFoundException(SavedJobNotFoundException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                404,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(RecruiterNoteNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleRecruiterNoteNotFoundException(RecruiterNoteNotFoundException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                404,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 }

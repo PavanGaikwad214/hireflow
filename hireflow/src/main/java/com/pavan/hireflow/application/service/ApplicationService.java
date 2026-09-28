@@ -194,6 +194,7 @@ public class ApplicationService {
         return mapToResponse(updatedApplication);
     }
 
+
     private ApplicationResponse mapToResponse(Application application){
 
         CandidateProfile candidate = application.getCandidate();
