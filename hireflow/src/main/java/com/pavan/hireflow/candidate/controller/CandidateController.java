@@ -23,7 +23,7 @@ public class CandidateController {
     }
 
 
-    @PreAuthorize("hasRole('CANDIDATE)")
+    @PreAuthorize("hasRole('CANDIDATE')")
     @GetMapping("/profile")
     public ResponseEntity<CandidateProfileResponse> getProfile(
             @AuthenticationPrincipal User user

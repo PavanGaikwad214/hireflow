@@ -6,6 +6,7 @@ import com.pavan.hireflow.application.dto.ApplicationStatusUpdateRequest;
 import com.pavan.hireflow.application.entity.Application;
 import com.pavan.hireflow.application.service.ApplicationService;
 import com.pavan.hireflow.auth.entity.User;
+import com.pavan.hireflow.candidate.dto.CandidateProfileResponse;
 import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -86,4 +87,15 @@ public class ApplicationController {
 
               return ResponseEntity.ok(response);
         }
+
+
+    @PreAuthorize("hasRole('RECRUITER')")
+    @GetMapping("/{applicationId}/candidate")
+    public ResponseEntity<CandidateProfileResponse> getApplicantProfile(
+           @PathVariable Long applicationId,
+           @AuthenticationPrincipal User user
+    ){
+        CandidateProfileResponse response = applicationService.getApplicantProfile(applicationId, user);
+        return ResponseEntity.ok(response);
+    }
 }

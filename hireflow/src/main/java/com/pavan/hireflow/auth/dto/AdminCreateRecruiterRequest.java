@@ -1,8 +1,6 @@
 package com.pavan.hireflow.auth.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,10 +27,16 @@ public class AdminCreateRecruiterRequest {
     private String password;
 
     @NotBlank(message = "Phone number is required")
+    @Pattern(
+            regexp = "^[6-9]\\d{9}$",
+            message = "Please provide a valid 10-digit phone number"
+    )
     private String phone;
 
     @NotBlank(message = "Designation is required")
     private String designation;
 
+    @NotNull(message = "Company ID is required")
+    @Positive(message = "Company ID must be positive")
     private Long companyId;
 }

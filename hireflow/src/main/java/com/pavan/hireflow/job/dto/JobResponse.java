@@ -1,9 +1,11 @@
 package com.pavan.hireflow.job.dto;
 
+import com.pavan.hireflow.common.dto.SkillResponse;
 import com.pavan.hireflow.common.enums.JobStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -32,7 +34,9 @@ public class JobResponse {
 
     private String recruiterName;
 
-    private Set<String> requiredSkills;
+    private Set<SkillResponse> requiredSkills;
 
     private JobStatus status;
+
+    private LocalDateTime createdAt;
 }

@@ -3,11 +3,9 @@ package com.pavan.hireflow.job.service;
 import com.pavan.hireflow.auth.entity.User;
 import com.pavan.hireflow.candidate.entity.Skill;
 import com.pavan.hireflow.candidate.repository.SkillRepository;
+import com.pavan.hireflow.common.dto.SkillResponse;
 import com.pavan.hireflow.common.enums.JobStatus;
-import com.pavan.hireflow.common.exception.JobAccessDeniedException;
-import com.pavan.hireflow.common.exception.JobAlreadyClosedException;
-import com.pavan.hireflow.common.exception.JobNotFoundException;
-import com.pavan.hireflow.common.exception.RecruiterProfileNotFoundException;
+import com.pavan.hireflow.common.exception.*;
 import com.pavan.hireflow.company.entity.RecruiterProfile;
 import com.pavan.hireflow.company.repository.RecruiterProfileRepository;
 import com.pavan.hireflow.job.dto.JobRequest;
@@ -41,6 +39,11 @@ public class JobService {
         RecruiterProfile recruiterProfile = recruiterProfileRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new RecruiterProfileNotFoundException("Recruiter Profile Not Found"));
 
+        if(request.getMinSalary() != null
+                   && request.getMaxSalary() != null
+                   && request.getMinSalary() > request.getMaxSalary()){
+            throw new InvalidSalaryRangeException("Minimum salary cannot be greater than maximum salary");
+        }
 
         Job job = new Job();
 
@@ -164,15 +167,28 @@ public class JobService {
 
     }
 
+    public List<JobResponse> getMyJobs(User user){
+        RecruiterProfile recruiter = recruiterProfileRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RecruiterProfileNotFoundException("Recruiter Profile Not Found"));
+
+        return jobRepository.findByRecruiter_Id(recruiter.getId())
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     private JobResponse mapToResponse(Job job){
 
         String recruiterName =
                 job.getRecruiter().getUser().getFirstName()+" "+
                         job.getRecruiter().getUser().getLastName();
 
-        Set<String> requiredSkills = job.getRequiredSkills()
+        Set<SkillResponse> requiredSkills = job.getRequiredSkills()
                 .stream()
-                .map(Skill::getName)
+                .map(skill -> new SkillResponse(
+                        skill.getId(),
+                        skill.getName()
+                ))
                 .collect(Collectors.toSet());
 
         return new JobResponse(
@@ -188,7 +204,9 @@ public class JobService {
                 job.getRecruiter().getId(),
                 recruiterName,
                 requiredSkills,
-                job.getStatus()
+                job.getStatus(),
+                job.getCreatedAt()
         );
     }
+
 }

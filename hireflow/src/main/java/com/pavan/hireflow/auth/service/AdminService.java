@@ -12,6 +12,7 @@ import com.pavan.hireflow.company.entity.Company;
 import com.pavan.hireflow.company.entity.RecruiterProfile;
 import com.pavan.hireflow.company.repository.CompanyRepository;
 import com.pavan.hireflow.company.repository.RecruiterProfileRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ public class AdminService {
     }
 
 
+    @Transactional
     public void createRecruiter(AdminCreateRecruiterRequest request){
 
         if(userRepository.existsByEmail(request.getEmail())){

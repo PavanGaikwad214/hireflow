@@ -10,6 +10,7 @@ import com.pavan.hireflow.common.enums.Role;
 import com.pavan.hireflow.common.exception.AccountInactiveException;
 import com.pavan.hireflow.common.exception.EmailAlreadyExistsException;
 import com.pavan.hireflow.common.exception.InvalidCredentialsException;
+import com.pavan.hireflow.common.exception.NewPasswordMustBeDifferentException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -82,6 +83,7 @@ public class AuthService {
 
         AuthResponse response = new AuthResponse();
         response.setUserId(user.getId());
+        response.setRole(user.getRole().name());
         response.setToken(token);
         response.setMessage("Login Successfully");
 
@@ -95,6 +97,13 @@ public class AuthService {
                 user.getPassword()
         )){
               throw new InvalidCredentialsException("Invalid Password");
+        }
+
+        if(passwordEncoder.matches(
+                request.getNewPassword(),
+                user.getPassword()
+        )){
+            throw new NewPasswordMustBeDifferentException("New password must be different from current password");
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));

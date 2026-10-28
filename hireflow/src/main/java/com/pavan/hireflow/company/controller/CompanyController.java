@@ -21,14 +21,14 @@ public class CompanyController {
         this.companyService = companyService;
     }
 
-//    @PostMapping("create")
-//    public ResponseEntity<CompanyResponse> createCompany(
-//            @RequestBody CompanyRequest request
-//            ){
-//
-//        CompanyResponse company = companyService.createCompany(request);
-//
-//        return ResponseEntity.status(HttpStatus.CREATED).body(company);
-//
-//    }
+    @PostMapping("create")
+    public ResponseEntity<CompanyResponse> createCompany(
+            @RequestBody CompanyRequest request
+            ){
+
+        CompanyResponse company = companyService.createCompany(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(company);
+
+    }
 }

@@ -1,6 +1,7 @@
 package com.pavan.hireflow.job.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,8 +24,10 @@ public class JobRequest {
     @NotBlank(message = "Employment type is required")
     private String employmentType;
 
+    @PositiveOrZero(message = "Minimum salary cannot be negative")
     private Double minSalary;
 
+    @PositiveOrZero(message = "Maximum salary cannot be negative")
     private Double maxSalary;
 
     private Set<String> requiredSkills = new HashSet<>();

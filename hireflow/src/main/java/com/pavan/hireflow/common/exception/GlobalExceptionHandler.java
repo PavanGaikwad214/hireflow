@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
                 .getFieldErrors()
                 .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         ApiErrorResponse response = new ApiErrorResponse(
-                404,
+                400,
                 "Validation failed",
                 LocalDateTime.now(),
                 errors
@@ -312,5 +312,60 @@ public class GlobalExceptionHandler {
                 null
         );
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(InterviewAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleInterviewAlreadyExistsException(InterviewAlreadyExistsException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                409,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(InterviewNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleInterviewNotFoundException(InterviewNotFoundException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                404,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(NotificationNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleNotificationNotFoundException(NotificationNotFoundException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                404,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(InvalidSalaryRangeException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidSalaryRangeException(InvalidSalaryRangeException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                400,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(NewPasswordMustBeDifferentException.class)
+    public ResponseEntity<ApiErrorResponse> handleNewPasswordMustBeDifferentException(NewPasswordMustBeDifferentException exception){
+        ApiErrorResponse response = new ApiErrorResponse(
+                400,
+                exception.getMessage(),
+                LocalDateTime.now(),
+                null
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }

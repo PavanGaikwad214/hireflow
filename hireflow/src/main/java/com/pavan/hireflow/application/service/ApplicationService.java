@@ -5,6 +5,7 @@ import com.pavan.hireflow.application.dto.ApplicationStatusUpdateRequest;
 import com.pavan.hireflow.application.entity.Application;
 import com.pavan.hireflow.application.repository.ApplicationRepository;
 import com.pavan.hireflow.auth.entity.User;
+import com.pavan.hireflow.candidate.dto.CandidateProfileResponse;
 import com.pavan.hireflow.candidate.entity.CandidateProfile;
 import com.pavan.hireflow.candidate.entity.Resume;
 import com.pavan.hireflow.candidate.repository.CandidateProfileRepository;
@@ -16,6 +17,8 @@ import com.pavan.hireflow.company.entity.RecruiterProfile;
 import com.pavan.hireflow.company.repository.RecruiterProfileRepository;
 import com.pavan.hireflow.job.entity.Job;
 import com.pavan.hireflow.job.repository.JobRepository;
+import com.pavan.hireflow.notification.serivce.NotificationService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,16 +32,18 @@ public class ApplicationService {
     private final JobRepository jobRepository;
     private final RecruiterProfileRepository recruiterProfileRepository;
     private final ResumeRepository resumeRepository;
+    private final NotificationService notificationService;
 
-    public ApplicationService(ApplicationRepository applicationRepository, CandidateProfileRepository candidateProfileRepository, JobRepository jobRepository, RecruiterProfileRepository recruiterProfileRepository, ResumeRepository resumeRepository) {
+    public ApplicationService(ApplicationRepository applicationRepository, CandidateProfileRepository candidateProfileRepository, JobRepository jobRepository, RecruiterProfileRepository recruiterProfileRepository, ResumeRepository resumeRepository, NotificationService notificationService) {
         this.applicationRepository = applicationRepository;
         this.candidateProfileRepository = candidateProfileRepository;
         this.jobRepository = jobRepository;
         this.recruiterProfileRepository = recruiterProfileRepository;
         this.resumeRepository = resumeRepository;
+        this.notificationService = notificationService;
     }
 
-
+    @Transactional
     public ApplicationResponse applyForJob(Long jobId, Long resumeId, User user){
 
         CandidateProfile candidateProfile = candidateProfileRepository.findByUserId(user.getId())
@@ -77,9 +82,25 @@ public class ApplicationService {
 
         Application savedApplication = applicationRepository.save(application);
 
+        notificationService.createNotification(
+                candidateProfile.getUser(),
+                "Application Submitted",
+                "Your application for " + job.getTitle() + " has been submitted successfully."
+        );
+
+        notificationService.createNotification(
+                job.getRecruiter().getUser(),
+                "New Application Received",
+                candidateProfile.getUser().getFirstName()
+                        + " " + candidateProfile.getUser().getLastName()
+                        + " has applied for your job: "
+                        + job.getTitle()
+                        + "."
+
+        );
+
         return mapToResponse(savedApplication);
     }
-
 
     public List<ApplicationResponse> getMyApplication(User user){
 
@@ -93,6 +114,7 @@ public class ApplicationService {
                 .toList();
     }
 
+    @Transactional
     public ApplicationResponse withdrawApplication(Long applicationId, User user){
 
         Application application = applicationRepository.findById(applicationId)
@@ -120,6 +142,22 @@ public class ApplicationService {
         application.setUpdatedAt(LocalDateTime.now());
 
         Application savedApplication = applicationRepository.save(application);
+
+//        System.out.println(
+//                "WITHDRAWAL NOTIFICATION → User ID: "
+//                        + application.getJob().getRecruiter().getUser().getId()
+//        );
+
+        notificationService.createNotification(
+                application.getJob().getRecruiter().getUser(),
+                "Application Withdrawn",
+                application.getCandidate().getUser().getFirstName()
+                    + " " + application.getCandidate().getUser().getLastName()
+                      + " has withdrawn their application for "
+                        + application.getJob().getTitle()
+                        + "."
+        );
+
         return mapToResponse(savedApplication);
     }
 
@@ -135,6 +173,7 @@ public class ApplicationService {
                 .toList();
     }
 
+    @Transactional
     public ApplicationResponse updateApplicationStatus(
             Long application_Id,
             ApplicationStatusUpdateRequest request,
@@ -189,11 +228,73 @@ public class ApplicationService {
         application.setStatus(newStatus);
         application.setUpdatedAt(LocalDateTime.now());
 
+        if(request.getStatus() == ApplicationStatus.UNDER_REVIEW) {
+            notificationService.createNotification(
+                    application.getCandidate().getUser(),
+                    "Application Under Review",
+                    "Your application for " + application.getJob().getTitle()
+                            + " is under review."
+            );
+        }
+
+        if(request.getStatus() == ApplicationStatus.SHORTLISTED) {
+            notificationService.createNotification(
+                    application.getCandidate().getUser(),
+                    "Application Shortlisted",
+                    "Your application for " + application.getJob().getTitle()
+                                 + " is shortlisted."
+            );
+        }
+
+        if(request.getStatus() == ApplicationStatus.HIRED){
+            notificationService.createNotification(
+                    application.getCandidate().getUser(),
+                    "Application Hired",
+                    "Congratulations!! Your application for " + application.getJob().getTitle()
+                              + " has been selected."
+            );
+        }
+
+        if(request.getStatus() == ApplicationStatus.REJECTED){
+            notificationService.createNotification(
+                    application.getCandidate().getUser(),
+                    "Application Rejected",
+                    "Your application for " + application.getJob().getTitle()
+                               + " has been rejected."
+            );
+        }
+
         Application updatedApplication = applicationRepository.save(application);
 
         return mapToResponse(updatedApplication);
     }
 
+    public CandidateProfileResponse getApplicantProfile(
+            Long applicationId,
+            User user
+    ){
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new ApplicationNotFoundException("Application Not Found"));
+
+        RecruiterProfile recruiter = recruiterProfileRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RecruiterProfileNotFoundException("Recruiter Profile Not Found"));
+
+        if(!application.getJob().getRecruiter().getId().equals(recruiter.getId())){
+            throw new JobAccessDeniedException("You are not allowed to view this candidate profile");
+        }
+
+        CandidateProfile candidate = application.getCandidate();
+
+        return new  CandidateProfileResponse(
+                candidate.getId(),
+                candidate.getSummary(),
+                candidate.getHeadline(),
+                candidate.getResumeUrl(),
+                candidate.getGithubUrl(),
+                candidate.getLinkedinUrl(),
+                candidate.getPortfolioUrl()
+        );
+    }
 
     private ApplicationResponse mapToResponse(Application application){
 

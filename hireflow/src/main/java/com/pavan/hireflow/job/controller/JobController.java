@@ -7,6 +7,7 @@ import com.pavan.hireflow.job.service.JobService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,5 +67,11 @@ public class JobController {
             @AuthenticationPrincipal User user
     ){
         return ResponseEntity.ok(jobService.closeJob(jobId, user));
+    }
+
+    @GetMapping("/my")
+    @PreAuthorize("hasRole('RECRUITER')")
+    public ResponseEntity<List<JobResponse>> getMyJobs(@AuthenticationPrincipal User user){
+        return ResponseEntity.ok(jobService.getMyJobs(user));
     }
 }
